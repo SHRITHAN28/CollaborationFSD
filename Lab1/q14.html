@@ -1,0 +1,90 @@
+/*Program: Create an Item class and a Cart class. The Cart class should have 
+methods to add, remove, and view items. The Item class should include 
+properties like name, price, and quantity.
+Task: Implement features like updating the quantity of items, calculating the total price, and applying discount codes. Use localStorage to persist 
+the cart items even after refreshing the page. Display the cart contents dynamically on the page. */
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Cart</title>
+</head>
+<body>
+    <h1>Shopping Cart</h1>
+
+    <div>
+        <label>Item Name: <input type="text" id="itemName"></label><br>
+        <label>Price: <input type="number" id="itemPrice"></label><br>
+        <label>Quantity: <input type="number" id="itemQuantity"></label><br>
+        <button onclick="addItem()">Add Item</button>
+    </div>
+
+    <h2>Cart Items:</h2>
+    <div id="cart"></div>
+    <h3>Total Price: <span id="totalPrice">0</span></h3>
+
+    <script>
+        class Item {
+            constructor(name, price, quantity) {
+                this.name = name;
+                this.price = price;
+                this.quantity = quantity;
+            }
+        }
+
+        class Cart {
+            constructor() {
+                this.items = [];
+            }
+
+            addItem(name, price, quantity) {
+                const existingItem = this.items.find(item => item.name === name);
+                if (existingItem) {
+                    existingItem.quantity += quantity;
+                } else {
+                    this.items.push(new Item(name, price, quantity));
+                }
+                this.displayCart();
+            }
+
+            removeItem(name) {
+                this.items = this.items.filter(item => item.name !== name);
+                this.displayCart();
+            }
+
+            calculateTotal() {
+                return this.items.reduce((total, item) => total + item.price * item.quantity, 0);
+            }
+
+            displayCart() {
+                const cartDiv = document.getElementById('cart');
+                const totalPrice = document.getElementById('totalPrice');
+                cartDiv.innerHTML = '';
+                this.items.forEach(item => {
+                    cartDiv.innerHTML += `<p>${item.name} - ₹${item.price} x ${item.quantity} 
+                        <button onclick="removeItem('${item.name}')">Remove</button></p>`;
+                });
+                totalPrice.innerText = this.calculateTotal();
+            }
+        }
+
+        const cart = new Cart();
+
+        function addItem() {
+            const name = document.getElementById('itemName').value;
+            const price = parseFloat(document.getElementById('itemPrice').value);
+            const quantity = parseInt(document.getElementById('itemQuantity').value);
+            if (name && price > 0 && quantity > 0) {
+                cart.addItem(name, price, quantity);
+            } else {
+                alert('Please enter valid item details.');
+            }
+        }
+
+        function removeItem(name) {
+            cart.removeItem(name);
+        }
+    </script>
+</body>
+</html>
