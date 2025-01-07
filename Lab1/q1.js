@@ -33,3 +33,10 @@ catch(e)
 {
     console.log('error:',e.message);
 }
+/*a: 20
+b: 30
+Error: Assignment to constant variable.
+d: undefined
+h: 130
+Error: h is not defined
+PS E:\Documents\GitHub\CollaborationFSD>  */
