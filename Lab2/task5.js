@@ -8,9 +8,9 @@ Example Output:
 {id: 101, name: ‘Laptop’, discount: 10, inStock: true} */
 
 function updateProductInfo(product) {
-    const { id, name, price } = product;
-    const discount = price * 0.1;
-    const inStock = price > 0;
+    let { id, name, price } = product;
+    let discount = price * 0.1;
+    let inStock = price > 0;
     return { ...{ id, name }, discount, inStock };
 }
 const product = { id: 101, name: 'Laptop', price: 1000, category: 'Electronics' };
