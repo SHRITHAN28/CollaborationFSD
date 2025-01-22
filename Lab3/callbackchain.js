@@ -9,5 +9,6 @@ function sub(num, callback) {
 }
 function add(num) {
     const result = num + 10;
-    return result;
+    let value = document.getElementById('calbakchain');
+    value.innerHTML = result;
 }

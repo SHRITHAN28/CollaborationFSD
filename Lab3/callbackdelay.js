@@ -3,6 +3,7 @@
 //the message has been printed.
 function delayed(msg, delay) {
     setTimeout(() => {
-        console.log(msg);
+        let value = document.getElementById('calldelay');
+        value.innerHTML = msg;
     }, delay);
 }
