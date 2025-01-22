@@ -11,5 +11,3 @@ function add(num) {
     const result = num + 10;
     return result;
 }
-
-console.log(mul(num, sub));
