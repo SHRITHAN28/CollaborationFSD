@@ -1,0 +1,36 @@
+<html>
+
+<body>
+    <h1>Weather Today</h1>
+    <button onclick="fetchWeather()">press</button>
+    <p id="weather"></p>
+</body>
+<script>
+    function fetchWeather() {
+        const url = 'https://pro.openweathermap.org/data/2.5/forecast?lat=44.34&lon=10.99&appid=ec9c3f61099329cdb566a83771aa3943';
+        const key = 'mykey';
+        let tabl = `<table style="border: 5px black solid">
+                            <tr>
+                                <th>temp</th>
+                                <th>humidity</th>
+                                <th>wind speed</th>
+                                <th>date</th>
+                            </tr>`;
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                for (let i = 0; i < 50; i++) {
+                    tabl += `<tr>
+                                <td>${data.list[i].main.temp}</td>
+                                <td>${data.list[i].main.humidity}</td>
+                                <td>${data.list[i].wind.speed}</td>
+                                <td>${data.list[i].dt_txt}</td>
+                            </tr>`;
+                }
+            });
+        tabl += "</table>";
+        document.getElementById('weather').innerHTML = tabl;
+    }
+</script>
+
+</html>

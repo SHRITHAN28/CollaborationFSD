@@ -1,0 +1,44 @@
+<!-- plot a bar chart for the above implementation using date 
+ and temperature along x and y axis respectively use chartjs library-->
+<html>
+
+<body>
+    <button onclick="showw()">presss</button>
+    <canvas id="bar"></canvas>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    function showw() {
+        const url = 'https://pro.openweathermap.org/data/2.5/forecast?lat=44.34&lon=10.99&appid=ec9c3f61099329cdb566a83771aa3943';
+        const tempList = []
+        const dates = []
+        fetch(url).then(response => response.json())
+            .then(data => {
+                for (let i = 0; i < 50; i++) {
+
+                    tempList.push(data.list[i].main.temp)
+                    dates.push(data.list[i].dt_txt)
+                }
+            });
+        console.log(dates)
+        const ctx = document.getElementById('bar');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: dates,//it is for temperature
+                datasets: [{
+                    label: 'temperatures as per dates',
+                    data: tempList,//here we need to enter dates
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+    }
+</script>
+
+</html>
