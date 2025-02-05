@@ -20,6 +20,7 @@
             .then(response => response.json())
             .then(data => {
                 for (let i = 0; i < 50; i++) {
+                    console.log(data.list[i].main.temp)
                     tabl += `<tr>
                                 <td>${data.list[i].main.temp}</td>
                                 <td>${data.list[i].main.humidity}</td>
