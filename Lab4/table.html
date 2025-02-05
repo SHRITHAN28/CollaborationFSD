@@ -1,4 +1,4 @@
-<html>
+<!-- <html>
 
 <body>
     <h1>Weather Today</h1>
@@ -19,7 +19,7 @@
         fetch(url)
             .then(response => response.json())
             .then(data => {
-                for (let i = 0; i < 50; i++) {
+                for (let i = 0; i < 40; i++) {
                     console.log(data.list[i].main.temp)
                     tabl += `<tr>
                                 <td>${data.list[i].main.temp}</td>
@@ -32,6 +32,48 @@
         tabl += "</table>";
         document.getElementById('weather').innerHTML = tabl;
     }
+</script>
+
+</html> -->
+
+<html>
+
+<body>
+    <h1>Weather Today</h1>
+    <button onclick="fetchWeather()">press</button>
+    <table id="weatherhead">
+        <tbody id="weather"></tbody>
+    </table>
+    <p id="test"></p>
+</body>
+<script>
+    function fetchWeather() {
+        const url = 'https://pro.openweathermap.org/data/2.5/forecast?lat=44.34&lon=10.99&appid=ec9c3f61099329cdb566a83771aa3943';
+        let tab1 = document.getElementById('weatherhead');
+        let tbd = document.getElementById('weather');
+        tab1.innerHTML = ` <thead><tr>
+                                <th>temp</th>
+                                <th>humidity</th>
+                                <th>wind speed</th>
+                                <th>date</th>
+                            </tr></thead><tbody>`;
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                let temp="";
+                for (let i = 0; i < 40; i += 8) {
+                    console.log(data.list[i].main.temp)
+                    temp= temp+ `<tr>
+                                <td>${data.list[i].main.humidity}</td>
+                                <td>${data.list[i].wind.speed}</td>
+                                <td>${data.list[i].dt_txt}</td>
+                            </tr>`;
+                    // console.log(tbd);
+                }
+                tab1.innerHTML+= temp;
+            });
+        // tab1 += `<tr><td>test</td></tr>`
+        }
 </script>
 
 </html>
