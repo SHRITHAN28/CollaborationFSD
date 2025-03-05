@@ -4,3 +4,6 @@ eventEmitter.once('greet', (name) => {
     console.log(`Hello, ${name}!`);
 });
 eventEmitter.emit('greet', 'Alice');
+
+
+
