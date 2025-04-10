@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Task Manager</title>
+</head>
+<body>
+  <div id="loginUI" style="display: block;">
+    <form id="Ureg">
+      <input type="text" id="uname" required placeholder="Name">
+      <input type="email" id="uemail" required placeholder="Email">
+      <input type="password" id="upasword" required placeholder="Password">
+      <button type="submit">Register</button>
+    </form>
+
+    <form id="Ulog">
+      <input type="email" id="lemail" required placeholder="Email">
+      <input type="password" id="lpassword" required placeholder="Password">
+      <button type="submit">Login</button>
+    </form>
+  </div>
+
+  <div id="taskUI" style="display: none;">
+    <button onclick="logout()">Logout</button>
+    <h3>Create Task</h3>
+    <input type="text" id="taskTitle" placeholder="Title" required>
+    <input type="text" id="taskDesc" placeholder="Description">
+    <input type="date" id="taskDue" required>
+
+    <select id="taskp">
+      <option value="high">High</option>
+      <option value="medium" selected>Medium</option>
+      <option value="low">Low</option>
+    </select>
+
+    <button onclick="createTask()">Create Task</button>
+  </div>
+
+  <div style="display: none;" id="taskSection">
+    <button onclick="fetchTasks()">Load Tasks</button>
+    <div id="taskList"></div>
+  </div>
+
+  <script>
+    let authToken = "";
+    const apiBase = "http://localhost:5000";
+
+    document.getElementById("Ureg").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const name = uname.value;
+      const email = uemail.value;
+      const password = upasword.value;
+
+      const res = await fetch(`${apiBase}/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password })
+      });
+
+      const data = await res.json();
+      alert(data.message || "Registered!");
+    });
+
+    document.getElementById("Ulog").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = lemail.value;
+      const password = lpassword.value;
+
+      const res = await fetch(`${apiBase}/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await res.json();
+      if (data.token) {
+        authToken = data.token;
+        document.getElementById("taskUI").style.display = "block";
+        document.getElementById("loginUI").style.display = "none";
+        document.getElementById("taskSection").style.display = "block";
+        fetchTasks();
+      }
+      alert(data.message || "Login done.");
+    });
+
+    function logout() {
+      authToken = "";
+      document.getElementById("taskUI").style.display = "none";
+      document.getElementById("taskSection").style.display = "none";
+      document.getElementById("loginUI").style.display = "block";
+      alert("Logged out.");
+    }
+
+    async function createTask() {
+      const title = taskTitle.value;
+      const description = taskDesc.value;
+      const dueDate = taskDue.value;
+      const priority = document.getElementById("taskp").value;
+
+      const res = await fetch(`${apiBase}/tasks`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${authToken}`
+        },
+        body: JSON.stringify({ title, description, dueDate, priority })
+      });
+
+      const data = await res.json();
+      alert(data.message || "Task created.");
+      fetchTasks();
+    }
+
+    async function fetchTasks() {
+      const res = await fetch(`${apiBase}/tasks`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${authToken}`
+        }
+      });
+
+      const data = await res.json();
+      const taskList = document.getElementById("taskList");
+      taskList.innerHTML = "";
+
+      if (Array.isArray(data)) {
+        data.forEach(task => {
+          const item = document.createElement("div");
+          item.innerHTML = `
+            <h3>${task.title}</h3>
+            <p>Status: ${task.status} | Priority: ${task.priority}</p>
+            <p>Due: ${new Date(task.dueDate).toLocaleDateString()}</p>
+            <button onclick="markAsCompleted('${task._id}')">✅ Complete</button>
+            <button onclick="deletet('${task._id}')">❌ Delete</button>
+          `;
+          taskList.appendChild(item);
+        });
+      }
+    }
+
+    async function markAsCompleted(taskId) {
+      const res = await fetch(`${apiBase}/tasks/${taskId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${authToken}`
+        },
+        body: JSON.stringify({ status: "completed" })
+      });
+      const data = await res.json();
+      alert(data.message || "Marked as completed.");
+      fetchTasks();
+    }
+
+    async function deletet(taskId) {
+      const res = await fetch(`${apiBase}/tasks/${taskId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${authToken}`
+        }
+      });
+      const data = await res.json();
+      alert(data.message || "Deleted.");
+      fetchTasks();
+    }
+  </script>
+</body>
+</html>
