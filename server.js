@@ -86,7 +86,12 @@ app.get("/tasks", authMiddleware, async (req, res) => {
     const statusOrder = { pending: 1, "in-progress": 2, completed: 3 };
   
     const tasks = await Task.find({ assignedTo: req.userId });
-  
+    for (let task of tasks) {
+      if (task.status === "in-progress" && task.dueDate && new Date(task.dueDate) < Date.now()) {
+        task.status = "pending";
+        await task.save();
+      }
+    }
     const sorted = tasks.sort((a, b) => {
       const p1 = priorityOrder[a.priority] || 4;
       const p2 = priorityOrder[b.priority] || 4;
@@ -94,6 +99,7 @@ app.get("/tasks", authMiddleware, async (req, res) => {
   
       const s1 = statusOrder[a.status] || 4;
       const s2 = statusOrder[b.status] || 4;
+      if (p1 !== p2) return p1 - p2;
       return s1 - s2;
     });
   
